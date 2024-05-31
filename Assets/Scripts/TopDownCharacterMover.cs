@@ -19,9 +19,12 @@ public class TopDownCharacterMover : MonoBehaviour
     [SerializeField]
     private bool rotateTorwardsMouse;
 
+    private Rigidbody _rb;
+
     private void Awake()
     {
         _input = GetComponent<InputHandler>();
+        _rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -59,13 +62,10 @@ public class TopDownCharacterMover : MonoBehaviour
 
     private Vector3 MoveTorwardTarget(Vector3 targetVector)
     {
-        var speed = moveSpeed * Time.deltaTime;
+        targetVector = Quaternion.Euler(0, camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
 
-        targetVector = Quaternion.Euler(0, camera.gameObject.transform.eulerAngles.y, 0)* targetVector;
-
-        var targetPosition = transform.position + targetVector * speed;
-
-        transform.position = targetPosition;
+        var velocity = targetVector.normalized * moveSpeed;
+        _rb.velocity = new Vector3(velocity.x, _rb.velocity.y, velocity.z);
 
         return targetVector;
     }
