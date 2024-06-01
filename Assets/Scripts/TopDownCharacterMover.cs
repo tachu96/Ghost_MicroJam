@@ -8,7 +8,10 @@ public class TopDownCharacterMover : MonoBehaviour
 
     private InputHandler _input;
     [SerializeField]
-    private float moveSpeed;
+    private float originalMoveSpeed;
+
+    public float currentMoveSpeed { get; private set; }
+    private float moveSpeedHolder;
 
     [SerializeField]
     private Camera camera;
@@ -25,6 +28,8 @@ public class TopDownCharacterMover : MonoBehaviour
     {
         _input = GetComponent<InputHandler>();
         _rb = GetComponent<Rigidbody>();
+        currentMoveSpeed = originalMoveSpeed;
+        moveSpeedHolder = currentMoveSpeed;
     }
 
     private void Update()
@@ -64,11 +69,19 @@ public class TopDownCharacterMover : MonoBehaviour
     {
         targetVector = Quaternion.Euler(0, camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
 
-        var velocity = targetVector.normalized * moveSpeed;
+        var velocity = targetVector.normalized * currentMoveSpeed;
         _rb.velocity = new Vector3(velocity.x, _rb.velocity.y, velocity.z);
 
         return targetVector;
     }
 
+    public void TemporalSpeedUp(float movementIncrease) {
+        moveSpeedHolder = currentMoveSpeed;
+        currentMoveSpeed += movementIncrease;
+    }
 
+    internal void ReturnToNormalSpeed()
+    {
+        currentMoveSpeed = moveSpeedHolder;
+    }
 }

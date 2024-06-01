@@ -3,26 +3,39 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(TopDownCharacterMover))]
 public class MainMechanic : MonoBehaviour
 {
     public GameObject AttackTrigger;
 
     public MechanicsUI mechanicsUI;
 
+    public float phaseSpeedUpFactor;
+
     [SerializeField]
     private float AttackDuration = 0.25f;
 
     [SerializeField]
-    private float cooldownDuration = 5f;
+    private float attackCooldownDuration = 5f;
+
+    [SerializeField]
+    private float phaseDuration = 0.25f;
+
+    [SerializeField]
+    private float phaseCooldownDuration = 5f;
 
     private bool isAttackOnCooldown=false;
+    private bool isPhaseOnCooldown= false;
 
     private int originalLayer;
     public int phaserLayer;
 
+    private TopDownCharacterMover topDownCharacterMover;
+
     private void Awake()
     {
         originalLayer = gameObject.layer;
+        topDownCharacterMover=GetComponent<TopDownCharacterMover>();
     }
 
 
@@ -31,12 +44,9 @@ public class MainMechanic : MonoBehaviour
         if (Input.GetMouseButton(0) && !isAttackOnCooldown) {
             StartCoroutine(Attack());
         }
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && !isPhaseOnCooldown)
         {
-            gameObject.layer = phaserLayer;
-        }
-        else { 
-            gameObject.layer=originalLayer;
+            StartCoroutine(Phase());
         }
     }
 
@@ -54,15 +64,41 @@ public class MainMechanic : MonoBehaviour
 
         float cooldownTimer = 0f;
 
-        while (cooldownTimer < cooldownDuration)
+        while (cooldownTimer < attackCooldownDuration)
         {
             cooldownTimer += Time.deltaTime;
-            float progress = cooldownTimer / cooldownDuration;
+            float progress = cooldownTimer / attackCooldownDuration;
             mechanicsUI.SetAttackCooldownProgress(progress);
             yield return null;
         }
 
         mechanicsUI.SetAttackCooldownProgress(1f);
         isAttackOnCooldown = false;
+    }
+
+    private IEnumerator Phase()
+    {
+        gameObject.layer = phaserLayer;
+
+        isPhaseOnCooldown = true;
+
+        topDownCharacterMover.TemporalSpeedUp(phaseSpeedUpFactor);
+
+        yield return new WaitForSeconds(phaseDuration);
+
+        topDownCharacterMover.ReturnToNormalSpeed();
+
+        float cooldownTimer = 0f;
+
+        while (cooldownTimer < phaseCooldownDuration)
+        {
+            cooldownTimer += Time.deltaTime;
+            float progress = cooldownTimer / phaseCooldownDuration;
+            mechanicsUI.SetAttackCooldownProgress(progress);
+            yield return null;
+        }
+
+        mechanicsUI.SetAttackCooldownProgress(1f);
+        isPhaseOnCooldown = false;
     }
 }

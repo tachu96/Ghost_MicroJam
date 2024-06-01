@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class MechanicsUI : MonoBehaviour
 {
     public Image AttackImage;
+    public Image PhaseImage;
     public TextMeshProUGUI ScoreUI;
     public int currentScore;
 
@@ -23,5 +24,10 @@ public class MechanicsUI : MonoBehaviour
     public void SetAttackCooldownProgress(float progress)
     {
         AttackImage.fillAmount = progress;
+    }
+
+    public void SetPhaseCooldownProgress(float progress)
+    {
+        PhaseImage.fillAmount = progress;
     }
 }
