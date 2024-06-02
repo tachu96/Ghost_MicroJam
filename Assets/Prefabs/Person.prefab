@@ -165,11 +165,17 @@ MonoBehaviour:
   - {fileID: 7750992273356880571, guid: a6b6816e8eaa4af489bf000ee744d669, type: 3}
   - {fileID: 7750992273356880571, guid: 71cc42a6fa6b5ea44ae74c3f9fd4b6a1, type: 3}
   - {fileID: 7750992273356880571, guid: 90c886f770dec184babce38c0353e899, type: 3}
+  - {fileID: 7750992273356880571, guid: 57333d5d0c19e4746ad3229e7b2ffb0a, type: 3}
+  - {fileID: 7750992273356880571, guid: 84da3968be049eb42ac2df6d8baf776a, type: 3}
   skinnedMeshRenderer: {fileID: 1019897786441155178}
+  smokeVFX: {fileID: 5443292352854760134, guid: e310a4a1d98cec146b1b29a125104398,
+    type: 3}
   bodyMaterials:
   - {fileID: 2100000, guid: 0768466043621aa44ab765b92eb26b1b, type: 2}
   - {fileID: 2100000, guid: 63540d99219d4164296712f6b2ffce40, type: 2}
   - {fileID: 2100000, guid: 315da11aba2583043b9e4c72341bc351, type: 2}
+  - {fileID: 2100000, guid: f6889ac7b0e16154d98efb2a0484652a, type: 2}
+  - {fileID: 2100000, guid: e5c1e971cf9f9e04a85fec84df777b3a, type: 2}
   headMaterial: {fileID: 2100000, guid: f1ebe34b69980c94ab028f30eb2e4412, type: 2}
 --- !u!54 &2233552171682802684
 Rigidbody:

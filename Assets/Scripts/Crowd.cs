@@ -13,6 +13,8 @@ public class Crowd : MonoBehaviour
     private void Awake()
     {
         navMeshAgent= GetComponent<NavMeshAgent>();
+        float offset = Random.Range(-3f, 0.5f);
+        navMeshAgent.speed= MainMechanic.Instance.getSpeed()+offset;
     }
 
     private void Start()
@@ -43,5 +45,9 @@ public class Crowd : MonoBehaviour
         Target = AllTargets[Random.Range(0, AllTargets.Length)];
         Target.transform.tag = targetTag;
         navMeshAgent.destination= Target.transform.position;
+    }
+
+    public void resetTarget() {
+        Target.transform.tag = targetTag;
     }
 }

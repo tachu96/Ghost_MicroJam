@@ -8,6 +8,25 @@ using UnityEngine;
 [RequireComponent(typeof(TopDownCharacterMover))]
 public class MainMechanic : MonoBehaviour
 {
+    public GameObject defeatScreen;
+    private static MainMechanic _instance;
+    public static MainMechanic Instance => _instance;
+
+    void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        _instance = this;
+
+        originalLayer = gameObject.layer;
+        topDownCharacterMover = GetComponent<TopDownCharacterMover>();
+    }
+
+
     public GameObject AttackTrigger;
 
     public MechanicsUI mechanicsUI;
@@ -42,11 +61,6 @@ public class MainMechanic : MonoBehaviour
     public Material originalMaterial;
     public Material phaseMaterial;
 
-    private void Awake()
-    {
-        originalLayer = gameObject.layer;
-        topDownCharacterMover=GetComponent<TopDownCharacterMover>();
-    }
 
 
     private void Update()
@@ -137,21 +151,56 @@ public class MainMechanic : MonoBehaviour
     public void AttackCooldownBuff()
     {
         if (attackCooldownDuration >= 0.1f) {
-            attackCooldownDuration -= 0.25f;
+            attackCooldownDuration -= 0.1f;
         }
         else {
             attackCooldownDuration = 0.1f;
         }
     }
 
-    internal void phaseDurationBuff()
+    public void phaseDurationBuff()
     {
         if (phaseDuration < 5f)
         {
-            phaseDuration += 0.25f;
+            phaseDuration += 0.1f;
         }
         else {
             phaseDuration = 5f;
         }
+    }
+
+    public void attackDurationBuff()
+    {
+        if (AttackDuration < 2.5f)
+        {
+            AttackDuration += 0.1f;
+        }
+        else
+        {
+            AttackDuration = 2.5f;
+        }
+    }
+
+    internal void phaseCooldownDurationBuff()
+    {
+        if (phaseCooldownDuration >= 0.1f)
+        {
+            phaseCooldownDuration -= 0.1f;
+        }
+        else
+        {
+            phaseCooldownDuration = 0.1f;
+        }
+    }
+
+    public float  getSpeed() {
+        return topDownCharacterMover.moveSpeedHolder;
+    }
+
+    public void Defeat()
+    {
+        defeatScreen.SetActive(true);
+        Debug.Log("Player Defeated");
+        Destroy(gameObject);
     }
 }
