@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Target
+  - GhostTarget
   layers:
   - Default
   - TransparentFX
@@ -14,9 +15,9 @@ TagManager:
   - UI
   - People
   - Building
-  - 
-  - 
-  - 
+  - Player
+  - Ghost
+  - GhostFloor
   - 
   - 
   - 

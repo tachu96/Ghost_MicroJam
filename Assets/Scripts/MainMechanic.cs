@@ -12,6 +12,8 @@ public class MainMechanic : MonoBehaviour
 
     public float phaseSpeedUpFactor;
 
+    public bool performingAttack=false;
+
     [SerializeField]
     private float AttackDuration = 0.25f;
 
@@ -58,7 +60,15 @@ public class MainMechanic : MonoBehaviour
 
         mechanicsUI.SetAttackCooldownProgress(0f);
 
+        performingAttack=true;
+
+        topDownCharacterMover.forwardThrust();
+
         yield return new WaitForSeconds(AttackDuration);
+
+        performingAttack=false;
+
+        topDownCharacterMover.Break();
 
         AttackTrigger.SetActive(false);
 
@@ -84,7 +94,13 @@ public class MainMechanic : MonoBehaviour
 
         topDownCharacterMover.TemporalSpeedUp(phaseSpeedUpFactor);
 
+        mechanicsUI.SetPhaseCooldownProgress(0f);
+
         yield return new WaitForSeconds(phaseDuration);
+
+
+
+        gameObject.layer = originalLayer;
 
         topDownCharacterMover.ReturnToNormalSpeed();
 
@@ -94,11 +110,25 @@ public class MainMechanic : MonoBehaviour
         {
             cooldownTimer += Time.deltaTime;
             float progress = cooldownTimer / phaseCooldownDuration;
-            mechanicsUI.SetAttackCooldownProgress(progress);
+            mechanicsUI.SetPhaseCooldownProgress(progress);
             yield return null;
         }
 
-        mechanicsUI.SetAttackCooldownProgress(1f);
+        mechanicsUI.SetPhaseCooldownProgress(1f);
         isPhaseOnCooldown = false;
+    }
+
+    public void SpeedBuff() {
+        topDownCharacterMover.SpeedBuff();
+    }
+
+    public void AttackCooldownBuff()
+    {
+        if (attackCooldownDuration >= 0.1f) {
+            attackCooldownDuration -= 0.25f;
+        }
+        else {
+            attackCooldownDuration = 0.1f;
+        }
     }
 }

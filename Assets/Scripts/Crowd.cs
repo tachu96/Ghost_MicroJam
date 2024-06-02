@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class Crowd : MonoBehaviour
 {
     private NavMeshAgent navMeshAgent;
+    public string targetTag;
     public GameObject Target;
     public GameObject[] AllTargets;
 
@@ -35,12 +36,12 @@ public class Crowd : MonoBehaviour
 
         if (Target != null) {
             //returning target tag back to normal once its reached
-            Target.transform.tag = "Target";
+            Target.transform.tag = targetTag;
         }
 
-        AllTargets = GameObject.FindGameObjectsWithTag("Target");
+        AllTargets = GameObject.FindGameObjectsWithTag(targetTag);
         Target = AllTargets[Random.Range(0, AllTargets.Length)];
-        Target.transform.tag = "Untagged";
+        Target.transform.tag = targetTag;
         navMeshAgent.destination= Target.transform.position;
     }
 }

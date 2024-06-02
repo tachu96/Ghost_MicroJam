@@ -10,8 +10,12 @@ public class TopDownCharacterMover : MonoBehaviour
     [SerializeField]
     private float originalMoveSpeed;
 
-    public float currentMoveSpeed { get; private set; }
-    private float moveSpeedHolder;
+    public float currentMoveSpeed;
+    private bool performingPhase=false;
+    public float moveSpeedHolder;
+
+    [SerializeField]
+    private float forwardThrustIncrease;
 
     [SerializeField]
     private Camera camera;
@@ -19,10 +23,13 @@ public class TopDownCharacterMover : MonoBehaviour
     [SerializeField]
     private float rotateSpeed;
 
-    [SerializeField]
-    private bool rotateTorwardsMouse;
-
     private Rigidbody _rb;
+
+    private MainMechanic _mainMechanic;
+
+    [SerializeField]
+    private float speedBuff;
+
 
     private void Awake()
     {
@@ -30,6 +37,7 @@ public class TopDownCharacterMover : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         currentMoveSpeed = originalMoveSpeed;
         moveSpeedHolder = currentMoveSpeed;
+        _mainMechanic = GetComponent<MainMechanic>();
     }
 
     private void Update()
@@ -38,13 +46,7 @@ public class TopDownCharacterMover : MonoBehaviour
 
         var movementVector=MoveTorwardTarget(targetVector);
 
-        if (!rotateTorwardsMouse)
-        {
-            RotateTorwardMovementVector(movementVector);
-        }
-        else {
-            RotateTorwardsMouseVector();
-        }
+        RotateTorwardsMouseVector();
     }
 
     private void RotateTorwardsMouseVector()
@@ -54,34 +56,53 @@ public class TopDownCharacterMover : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hitInfo, maxDistance: 1000f)) {
             var target = hitInfo.point;
             target.y = transform.position.y;
-            transform.LookAt(target);
+            if (!_mainMechanic.performingAttack) { 
+                transform.LookAt(target);
+            }
         }
     }
 
-    private void RotateTorwardMovementVector(Vector3 movementVector)
-    {
-        if (movementVector.magnitude == 0) { return; }
-        var rotation = Quaternion.LookRotation(movementVector);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, rotateSpeed);
-    }
 
     private Vector3 MoveTorwardTarget(Vector3 targetVector)
     {
         targetVector = Quaternion.Euler(0, camera.gameObject.transform.eulerAngles.y, 0) * targetVector;
 
         var velocity = targetVector.normalized * currentMoveSpeed;
-        _rb.velocity = new Vector3(velocity.x, _rb.velocity.y, velocity.z);
+        if (!_mainMechanic.performingAttack)
+        {
+            _rb.velocity = new Vector3(velocity.x, _rb.velocity.y, velocity.z);
+        }
 
         return targetVector;
     }
 
     public void TemporalSpeedUp(float movementIncrease) {
         moveSpeedHolder = currentMoveSpeed;
-        currentMoveSpeed += movementIncrease;
+        currentMoveSpeed =currentMoveSpeed * movementIncrease;
+        performingPhase = true;
     }
 
-    internal void ReturnToNormalSpeed()
+    public void ReturnToNormalSpeed()
     {
         currentMoveSpeed = moveSpeedHolder;
+        performingPhase = false;
+    }
+
+    public void forwardThrust() {
+        _rb.velocity = Vector3.zero;
+        _rb.AddForce(transform.forward*moveSpeedHolder*forwardThrustIncrease,ForceMode.Impulse);
+    }
+
+    public void Break()
+    {
+        _rb.velocity = Vector3.zero;
+    }
+
+    public void SpeedBuff()
+    {
+        moveSpeedHolder += speedBuff;
+        if (!performingPhase) { 
+            currentMoveSpeed=moveSpeedHolder;
+        }
     }
 }
