@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class GhostBuffPlayer : MonoBehaviour
 {
-    public enum BuffType
-    {
-        Speed,
-        AttackCooldown,
-    }
-
     public BuffType buffType;
 
     private void OnTriggerEnter(Collider other)
@@ -26,6 +20,9 @@ public class GhostBuffPlayer : MonoBehaviour
                         break;
                     case BuffType.AttackCooldown:
                         mainMechanic.AttackCooldownBuff();
+                        break;
+                    case BuffType.phaseDuration:
+                        mainMechanic.phaseDurationBuff();
                         break;
                 }
                 Debug.Log("gave buff!");

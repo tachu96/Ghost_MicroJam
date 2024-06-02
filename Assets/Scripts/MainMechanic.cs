@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Animations;
 using UnityEngine;
 
 [RequireComponent(typeof(TopDownCharacterMover))]
@@ -34,6 +36,12 @@ public class MainMechanic : MonoBehaviour
 
     private TopDownCharacterMover topDownCharacterMover;
 
+    public Animator animator;
+
+    public SkinnedMeshRenderer ghostMesh;
+    public Material originalMaterial;
+    public Material phaseMaterial;
+
     private void Awake()
     {
         originalLayer = gameObject.layer;
@@ -44,10 +52,12 @@ public class MainMechanic : MonoBehaviour
     private void Update()
     {
         if (Input.GetMouseButton(0) && !isAttackOnCooldown) {
+            animator.SetBool("Attacking", true);
             StartCoroutine(Attack());
         }
         if (Input.GetMouseButton(1) && !isPhaseOnCooldown)
         {
+            ghostMesh.material=phaseMaterial;
             StartCoroutine(Phase());
         }
     }
@@ -66,7 +76,9 @@ public class MainMechanic : MonoBehaviour
 
         yield return new WaitForSeconds(AttackDuration);
 
-        performingAttack=false;
+        animator.SetBool("Attacking", false);
+
+        performingAttack = false;
 
         topDownCharacterMover.Break();
 
@@ -98,7 +110,7 @@ public class MainMechanic : MonoBehaviour
 
         yield return new WaitForSeconds(phaseDuration);
 
-
+        ghostMesh.material = originalMaterial;
 
         gameObject.layer = originalLayer;
 
@@ -129,6 +141,17 @@ public class MainMechanic : MonoBehaviour
         }
         else {
             attackCooldownDuration = 0.1f;
+        }
+    }
+
+    internal void phaseDurationBuff()
+    {
+        if (phaseDuration < 5f)
+        {
+            phaseDuration += 0.25f;
+        }
+        else {
+            phaseDuration = 5f;
         }
     }
 }

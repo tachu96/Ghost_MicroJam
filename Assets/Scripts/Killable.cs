@@ -6,12 +6,18 @@ public class Killable : MonoBehaviour
 {
     public GameObject[] ghostType;
     private GameObject ghostToSpawn;
+    public SkinnedMeshRenderer skinnedMeshRenderer;
 
+    public Material[] bodyMaterials;
+    public Material headMaterial;
     private void Awake()
     {
         if (ghostType.Length > 0) { 
             int randomIndex= Random.Range(0, ghostType.Length);
             ghostToSpawn = ghostType[randomIndex];
+
+            Material[] materials = new Material[] { bodyMaterials[randomIndex], headMaterial};
+            skinnedMeshRenderer.materials = materials;
         }
     }
     public void Kill()
